@@ -1,20 +1,33 @@
 package Boot;
 import java.io.*;
-
+import java.util.Observable;
 
 import static java.lang.Thread.sleep;
 
-public class ClientHandler implements Runnable{
+public class ClientHandler extends Observable implements Runnable{
+
     private Client c;
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-
     private boolean status=true;
+
+
+
 
     public ClientHandler(Client cli) {
         this.c = cli;
+        String s;
+        if(c.getuSocket().isBound())
+            try {
+                BufferedReader br = new BufferedReader(new InputStreamReader(c.getuSocket().getInputStream()));
+                s=br.readLine();
+                while(s.isEmpty()||s.equals(""))s=br.readLine();
+                c.setName(s);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+    }
+    public void setStatus(boolean status) {
+        this.status = status;
     }
     private int solveExercise(MathExercise ex) {
         switch (ex.getOp()) {
@@ -41,9 +54,11 @@ public class ClientHandler implements Runnable{
                 pw = new PrintWriter(c.getuSocket().getOutputStream(), true);
                 if (pw==null){sleep(1000);continue;}
                 BufferedReader br = new BufferedReader(new InputStreamReader(c.getuSocket().getInputStream()));
-                if (c.getuSocket().isBound())c.setName(br.readLine());
+                if (c.getuSocket().isBound())
+                    for (String line = br.readLine(); line != null; line = br.readLine()) {
+                    }
                 else break;
-                sleep(1500);
+                sleep(500);
 
             } catch (IOException e) {
                 status=false;
@@ -61,6 +76,7 @@ public class ClientHandler implements Runnable{
 
 
     }
+
     public boolean isStatus() {
         return status;
     }

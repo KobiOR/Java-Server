@@ -24,7 +24,6 @@ import java.util.TimerTask;
 public class MyServerView extends BasicWindow {
     MyController C;
     List list;
-    Object o=null;
     Queue<Client> myClients;
 
     public void setC(MyController c) {
@@ -43,20 +42,8 @@ public class MyServerView extends BasicWindow {
         listPos.setLayout(asd);
 
         list = new List(listPos,SWT.BORDER );
-        list.setBounds(400,400,400,400);
-        list.addSelectionListener(new SelectionListener() {
+        list.setBounds(650,650,400,400);
 
-            @Override
-            public void widgetSelected(SelectionEvent arg0) {
-              int x=  list.getSelectionIndex();
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent arg0) {
-                // TODO Auto-generated method stub
-
-            }
-        });
         Button bExit = new Button(buttonsPos, SWT.PUSH);
         bExit.setText("Exit");
         bExit.addSelectionListener(new SelectionListener() {
@@ -80,7 +67,6 @@ public class MyServerView extends BasicWindow {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
                 String[] s=list.getSelection();
-
             }
 
             @Override
@@ -103,31 +89,24 @@ public class MyServerView extends BasicWindow {
             }
         });
 
-
-        run();
     }
     @Override
-    public void run() {
-        Timer timer = new Timer();
-        timer.schedule( new TimerTask() {
-            public void run() {
+    public synchronized void run() {
+
+        new Thread()
+        {
+            public synchronized void run() {
                 display.asyncExec(new Runnable() {
                     @Override
-                    public void run() {
+                    public synchronized void run() {
                         list.removeAll();
-                        for(Client c:myClients){
-                            if(c.getName()!=null){
-                                list.add(c.getName());
-                                shell.redraw();
-                            }
-                        }
+                        for (Client c : myClients)
+                            if(c.getName()!=null)list.add(c.getName());
+
                     }
                 });
             }
-        }, 0, 500);
-
-
-
+        }.start();
     }
     public void display(String str){
         display.asyncExec(new Runnable() {
@@ -147,3 +126,4 @@ public class MyServerView extends BasicWindow {
     }
 
 }
+

@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class MyTcpIpServer extends Observable {
+
     Set<ClientHandler> callables = new HashSet<>();
     private ServerSocket server;
     private ExecutorService executor;
@@ -24,7 +25,6 @@ public class MyTcpIpServer extends Observable {
             System.out.println("Cannot listen on port " + port);
         }
     }
-
     public void startServer(int maxClientsNum) {
         executor = Executors.newFixedThreadPool(maxClientsNum);
         Thread thread = new Thread(new Runnable() {
@@ -38,15 +38,15 @@ public class MyTcpIpServer extends Observable {
                         Socket socket = server.accept();
                         PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
                         BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                        Client newClient = new Client(socket);
-                        ClientHandler handler = new ClientHandler(newClient);
-                        setChanged();
-                        notifyObservers(newClient);
                         executor.submit(new Runnable() {
                             @Override
                             public void run() {
-                                handler.run();
+                                ClientHandler handler = new ClientHandler(new Client(socket));
+                                setChanged();
+                                notifyObservers(handler.getC());
                                 callables.add(handler);
+                                handler.run();
+
                             }
 
                         });
@@ -60,7 +60,6 @@ public class MyTcpIpServer extends Observable {
         thread.start();
 
     }
-
     public synchronized void check() {
         Thread thread = new Thread(new Runnable() {
             public void run()

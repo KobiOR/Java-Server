@@ -6,6 +6,8 @@ import Controller.MyController;
 import java.net.Socket;
 import java.util.*;
 
+import static java.lang.Thread.sleep;
+
 /**
  * Created by orrko_000 on 14/10/2016.
  */
@@ -22,27 +24,17 @@ public class MyModel implements Observer {
         server.startServer(50);
         C.getV().setMyClients(myClients=new LinkedList<>());
 
-      /*  TimerTask task = new TimerTask() {
-
-                @Override
-                public void run() {
-
-
-                }
-            };
-            Timer timer = new Timer();
-            timer.scheduleAtFixedRate(task, 0,1000);
-*/
-
         }
-    public void push(Client nClient){
+    public synchronized void push(Client nClient)   {
         myClients.add(nClient);
+        C.getV().run();
 
     }
-    public void remove(Client nClient){
+    public synchronized void remove(Client nClient){
       for (Client c:myClients)
           if (c.equals(nClient))
                myClients.remove(c);
+        C.getV().run();
 
     }
     @Override
@@ -56,6 +48,7 @@ public class MyModel implements Observer {
                     }
 
                 }
+
             }
 
 
