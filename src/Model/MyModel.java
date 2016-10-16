@@ -31,13 +31,12 @@ public class MyModel implements Observer {
 
     }
     public synchronized void remove(Client nClient){
-
         Iterator<Client> iter = myClients.iterator();
-
         while (iter.hasNext())
             if (nClient.equals(iter.next()))
-                iter.remove();
+            {iter.remove();myClients.remove(iter);}
         C.getV().run();
+        C.getV().display(nClient.getName()+" is left");
     }
     @Override
     public void update(Observable o, Object arg) {

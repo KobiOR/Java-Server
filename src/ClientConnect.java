@@ -1,14 +1,11 @@
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Random;
 
 import static java.lang.Thread.sleep;
 
-/**
- * Created by orrko_000 on 14/10/2016.
- */
+
 public class ClientConnect {
 
     public static void main(String args[]) throws IOException, InterruptedException {

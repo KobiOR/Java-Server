@@ -35,6 +35,8 @@ public class MyTcpIpServer extends Observable {
                 while (true) {
                     try {
                         String str;
+
+
                         Socket socket = server.accept();
                         PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
                         BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));

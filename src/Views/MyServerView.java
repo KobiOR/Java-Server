@@ -3,13 +3,12 @@ package Views;
 import Boot.Client;
 import Controller.MyController;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FormLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 import java.io.IOException;
@@ -18,12 +17,14 @@ import java.util.Queue;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static java.lang.System.exit;
+
 /**
  * Created by orrko_000 on 14/10/2016.
  */
 public class MyServerView extends BasicWindow {
     MyController C;
-    List list;
+    List userslist,noteList;
     Queue<Client> myClients;
 
     public void setC(MyController c) {
@@ -31,27 +32,36 @@ public class MyServerView extends BasicWindow {
     }
     @Override
     protected void initWidgets() {
+        shell.setLayout (new FillLayout());
 
-        shell.setLayout(new GridLayout(2, false));
-        Composite buttonsPos = new Composite(shell,SWT.NONE);
-        RowLayout rowLayout = new RowLayout(SWT.VERTICAL);
-        buttonsPos.setLayout(rowLayout);
+        SashForm A = new SashForm(shell,SWT.HORIZONTAL);
+        A.setLayout(new FillLayout());
+       // A.setEnabled(false);
 
-        Composite listPos = new Composite(shell,SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
-        RowLayout asd = new RowLayout(SWT.VERTICAL);
-        listPos.setLayout(asd);
-        list = new List(listPos,SWT.BORDER );
-        list.setBounds(650,650,400,400);
+        SashForm AB = new SashForm(A,SWT.HORIZONTAL);
+        AB.setLayout(new FillLayout());
 
-        Button bExit = new Button(buttonsPos, SWT.PUSH);
-        bExit.setText("Exit");
-        bExit.addSelectionListener(new SelectionListener() {
+        SashForm AC = new SashForm(A,SWT.VERTICAL);
+        AC.setLayout(new FillLayout());
+
+        Composite child1 = new Composite(AB,SWT.BORDER);
+        child1.setLayout(new RowLayout(SWT.BORDER));
+
+        userslist = new List(AC,SWT.BORDER);
+        noteList = new List(AC,SWT.BORDER);
+
+        Button bKick = new Button(child1, SWT.PUSH);
+        bKick.setText("Kick");
+        bKick.addSelectionListener(new SelectionListener() {
 
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                String[] s=list.getSelection();
-            }
+                String[] s = userslist.getSelection();
+                if (s != null && s.length>0)
+                    if (!s[0].isEmpty() && s[0] != "")
+                        C.getM().removeUserByName(s);
 
+            }
             @Override
             public void widgetDefaultSelected(SelectionEvent arg0) {
                 // TODO Auto-generated method stub
@@ -59,18 +69,16 @@ public class MyServerView extends BasicWindow {
             }
         });
 
-        Button bKick = new Button(buttonsPos, SWT.PUSH);
-        bKick.setText("Kick");
-        bKick.addSelectionListener(new SelectionListener() {
+        Button bExit = new Button(child1, SWT.PUSH);
+        bExit.setText("Exit");
+        bExit.addSelectionListener(new SelectionListener() {
 
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                    String[] s = list.getSelection();
-                    if (s != null && s.length>0)
-                        if (!s[0].isEmpty() && s[0] != "")
-                            C.getM().removeUserByName(s);
-
+                shell.close();
+                exit(1);
             }
+
             @Override
             public void widgetDefaultSelected(SelectionEvent arg0) {
                 // TODO Auto-generated method stub
@@ -83,6 +91,8 @@ public class MyServerView extends BasicWindow {
                 display.asyncExec(new Runnable() {
                     @Override
                     public void run() {
+                        shell.close();
+                        exit(1);
 
                     }
                 });
@@ -101,9 +111,9 @@ public class MyServerView extends BasicWindow {
                 display.asyncExec(new Runnable() {
                     @Override
                     public synchronized void run() {
-                        list.removeAll();
+                        userslist.removeAll();
                         for (Client c : myClients)
-                            if(c.getName()!=null)list.add(c.getName());
+                            if(c.getName()!=null)userslist.add(c.getName());
 
                     }
                 });
@@ -115,9 +125,7 @@ public class MyServerView extends BasicWindow {
 
             @Override
             public void run() {
-                System.out.print(str+ " connected");
-                list.add(str);
-                shell.redraw();
+                noteList.add(str);
             }
         });
 
