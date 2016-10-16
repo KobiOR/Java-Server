@@ -31,11 +31,13 @@ public class MyModel implements Observer {
 
     }
     public synchronized void remove(Client nClient){
-      for (Client c:myClients)
-          if (c.equals(nClient))
-               myClients.remove(c);
-        C.getV().run();
 
+        Iterator<Client> iter = myClients.iterator();
+
+        while (iter.hasNext())
+            if (nClient.equals(iter.next()))
+                iter.remove();
+        C.getV().run();
     }
     @Override
     public void update(Observable o, Object arg) {
@@ -50,10 +52,19 @@ public class MyModel implements Observer {
                 }
 
             }
+    public synchronized void removeUserByName(String[] s) {
+             Iterator<Client> iter = myClients.iterator();
+
+            while (iter.hasNext()) {
+                Client t=iter.next();
+                String str = t.getName();
+                if (s[0].equals(str))
+                    remove(t);
+            }
+        }
 
 
-
-    }
+}
 
 
 

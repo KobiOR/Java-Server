@@ -40,7 +40,6 @@ public class MyServerView extends BasicWindow {
         Composite listPos = new Composite(shell,SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
         RowLayout asd = new RowLayout(SWT.VERTICAL);
         listPos.setLayout(asd);
-
         list = new List(listPos,SWT.BORDER );
         list.setBounds(650,650,400,400);
 
@@ -60,15 +59,18 @@ public class MyServerView extends BasicWindow {
             }
         });
 
-        Button aa = new Button(buttonsPos, SWT.PUSH);
-        aa.setText("Kick");
-        aa.addSelectionListener(new SelectionListener() {
+        Button bKick = new Button(buttonsPos, SWT.PUSH);
+        bKick.setText("Kick");
+        bKick.addSelectionListener(new SelectionListener() {
 
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                String[] s=list.getSelection();
-            }
+                    String[] s = list.getSelection();
+                    if (s != null && s.length>0)
+                        if (!s[0].isEmpty() && s[0] != "")
+                            C.getM().removeUserByName(s);
 
+            }
             @Override
             public void widgetDefaultSelected(SelectionEvent arg0) {
                 // TODO Auto-generated method stub

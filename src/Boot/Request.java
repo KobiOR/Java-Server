@@ -7,7 +7,6 @@ public class Request {
 
     private boolean exit;
     private boolean wantSolu;
-    //Solution
 
     public Request() {
         this.exit =false;
