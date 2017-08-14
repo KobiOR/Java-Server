@@ -1,5 +1,9 @@
 package Boot;
-import java.io.*;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.Observable;
 
 import static java.lang.Thread.sleep;
@@ -26,23 +30,7 @@ public class ClientHandler extends Observable implements Runnable{
                 e.printStackTrace();
             }
     }
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-    private int solveExercise(MathExercise ex) {
-        switch (ex.getOp()) {
-            case "+":
-                return ex.getNum1() + ex.getNum2();
-            case "-":
-                return ex.getNum1() - ex.getNum2();
-            case "*":
-                return ex.getNum1() * ex.getNum2();
-            case "/":
-                return ex.getNum1() / ex.getNum2();
-            default:
-                return Integer.MAX_VALUE;
-        }
-    }
+
     @Override
     public void run() {
 
